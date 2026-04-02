@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/VgcCollege.Application/VgcCollege.Application.csproj" />
+    <Project Path="src/VgcCollege.Data/VgcCollege.Data.csproj" />
+    <Project Path="src/VgcCollege.Domain/VgcCollege.Domain.csproj" />
+    <Project Path="src/VgcCollege.Web/VgcCollege.Web.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/VgcCollege.Application.Tests/VgcCollege.Application.Tests.csproj" />
+    <Project Path="tests/VgcCollege.Data.Tests/VgcCollege.Data.Tests.csproj" />
+    <Project Path="tests/VgcCollege.Domain.Tests/VgcCollege.Domain.Tests.csproj" />
+  </Folder>
+</Solution>
