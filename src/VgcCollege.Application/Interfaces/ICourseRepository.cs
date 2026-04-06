@@ -9,16 +9,12 @@ namespace VgcCollege.Application.Interfaces;
 /// </summary>
 public interface ICourseRepository
 {
-    /// <summary>
-    ///<summary>Retorna todos os cursos do sistema.</summary>
-    /// </summary>
-    /// <returns></returns>
-    Task<IEnumerable<Course>> GetAllCourses();
+    /// <summary>Retorna todos os cursos do sistema.</summary>
+    Task<IEnumerable<Course>> GetAllAsync();
     
-    Task<IEnumerable<Course>> GetByBranchAssync(int branchId);
-    Task<Course?> GetCourseById(int id);
-    Task AddSync(Course course);
-    Task UpdateSync(Course course);
-    Task UpdateAssync(Course course);
-    Task DeleteSync(int id);
+    Task<IEnumerable<Course>> GetByBranchAsync(int branchId);
+    Task<Course?> GetByIdAsync(int id);
+    Task AddAsync(Course course);
+    Task UpdateAsync(Course course);
+    Task DeleteAsync(int id);
 }

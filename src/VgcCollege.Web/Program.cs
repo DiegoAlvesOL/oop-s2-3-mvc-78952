@@ -7,8 +7,11 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using VgcCollege.Application.Interfaces;
+using VgcCollege.Application.Services;
 using VgcCollege.Data;
 using VgcCollege.Data.Models;
+using VgcCollege.Data.Repositories;
 
 // Configura o Serilog antes de qualquer outro serviço para capturar
 // erros que ocorram durante o arranque da aplicação.
@@ -53,6 +56,11 @@ try
         options.LoginPath = "/Account/Login";
         options.AccessDeniedPath = "/Account/Login";
     });
+    
+    builder.Services.AddScoped<IBranchRepository, BranchRepository>();
+    builder.Services.AddScoped<ICourseRepository, CourseRepository>();
+    builder.Services.AddScoped<BranchService>();
+    builder.Services.AddScoped<CourseService>();
     
     builder.Services.AddControllersWithViews();
 

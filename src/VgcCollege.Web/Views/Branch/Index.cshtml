@@ -1,0 +1,40 @@
+@model IEnumerable<VgcCollege.Domain.Entities.Branch>
+
+@{
+    ViewData["Title"] = "Branches";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Branches</h2>
+    <a asp-action="Create" class="btn btn-primary">Add branch</a>
+</div>
+
+<table class="table table-bordered table-hover">
+    <thead class="table-light">
+    <tr>
+        <th>Branch name</th>
+        <th>Street</th>
+        <th>City</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var branch in Model)
+    {
+        <tr>
+            <td>@branch.BranchName</td>
+            <td>@branch.StreetName</td>
+            <td>@branch.City</td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@branch.Id" class="btn btn-sm btn-outline-secondary">Edit</a>
+                <form asp-action="Delete" asp-route-id="@branch.Id" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-sm btn-outline-danger"
+                            onclick="return confirm('Are you sure you want to delete this branch?')">
+                        Delete
+                    </button>
+                </form>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
