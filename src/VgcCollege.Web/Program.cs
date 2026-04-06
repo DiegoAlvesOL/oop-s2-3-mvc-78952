@@ -58,6 +58,19 @@ try
 
     var app = builder.Build();
 
+    // DADOS INICIAIS
+    // Executados após o build do app mas antes do pipeline HTTP.
+    // O scope garante que os serviços são resolvidos e descartados correctamente.
+    using (var scope = app.Services.CreateScope())
+    {
+        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+        await DatabaseInitialiser.SeedAsync(context, userManager, roleManager);
+    }
+
+
     
     // FASE 2 Pipeline HTTP
     // Cada middleware processa o pedido em sequência, de cima para baixo.
