@@ -13,6 +13,7 @@ using VgcCollege.Data;
 using VgcCollege.Data.Models;
 using VgcCollege.Data.Repositories;
 
+
 // Configura o Serilog antes de qualquer outro serviço para capturar
 // erros que ocorram durante o arranque da aplicação.
 Log.Logger = new LoggerConfiguration()
@@ -61,6 +62,8 @@ try
     builder.Services.AddScoped<ICourseRepository, CourseRepository>();
     builder.Services.AddScoped<BranchService>();
     builder.Services.AddScoped<CourseService>();
+    builder.Services.AddScoped<IStudentRepository, StudentRepository>();
+    builder.Services.AddScoped<StudentService>();
     
     builder.Services.AddControllersWithViews();
 

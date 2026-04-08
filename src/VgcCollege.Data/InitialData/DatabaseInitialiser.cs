@@ -1,5 +1,3 @@
-
-
 using Microsoft.AspNetCore.Identity;
 using VgcCollege.Data.InitialData;
 using VgcCollege.Data.Models;
@@ -26,7 +24,7 @@ public static class DatabaseInitialiser
         UserManager<ApplicationUser> userManager,
         RoleManager<IdentityRole> roleManager)
     {
-        await UsersAndRolesData.SeedAsync(userManager, roleManager);
+        await UsersAndRolesData.SeedAsync(context, userManager, roleManager);
         await BranchesAndCoursesData.SeedAsync(context);
     }
 }

@@ -13,11 +13,11 @@ namespace VgcCollege.Application.Interfaces;
 /// </summary>
 public interface IStudentRepository
 {
-    Task<IEnumerable<StudentProfile>> GeteAllAsync();
-    
-    Task<StudentProfile> GetByIdAsync(int id);
-    Task<StudentProfile> GetByIdentityUserIdAsync(string identityUserId);
-    Task AddAsync (StudentProfile student);
+    /// <summary>Retorna todos os perfis de alunos do sistema.</summary>
+    Task<IEnumerable<StudentProfile>> GetAllAsync();
+    Task<StudentProfile?> GetByIdAsync(int id);
+    Task<StudentProfile?> GetByIdentityUserIdAsync(string identityUserId);
+    Task AddAsync(StudentProfile student);
     Task UpdateAsync(StudentProfile student);
     Task DeleteAsync(int id);
 }

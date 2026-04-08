@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using VgcCollege.Data.Models;
 using VgcCollege.Domain.Constants;
+using VgcCollege.Domain.Entities;
 
 namespace VgcCollege.Data.InitialData;
 
@@ -12,12 +14,14 @@ namespace VgcCollege.Data.InitialData;
 public static class UsersAndRolesData
 {
     /// <summary>
-    /// Cria os três roles do sistema e os utilizadores de demonstração.
+    /// Cria os três roles, os utilizadores de demonstração e os respectivos perfis.
     /// Não insere dados se estes já existirem no banco.
     /// </summary>
+    /// <param name="context">Contexto do banco de dados.</param>
     /// <param name="userManager">Serviço do Identity para gestão de utilizadores.</param>
     /// <param name="roleManager">Serviço do Identity para gestão de roles.</param>
     public static async Task SeedAsync(
+        AppDbContext context,
         UserManager<ApplicationUser> userManager,
         RoleManager<IdentityRole> roleManager)
     {
@@ -25,36 +29,44 @@ public static class UsersAndRolesData
         await CreateRoleIfNotExistsAsync(roleManager, ApplicationRoles.Lecturer);
         await CreateRoleIfNotExistsAsync(roleManager, ApplicationRoles.Student);
 
-        await CreateUserIfNotExistsAsync(
-            userManager,
-            email: "admin@vgc.ie",
-            password: "Admin123!",
-            role: ApplicationRoles.Admin);
+        await CreateUserIfNotExistsAsync(userManager, "admin@vgc.ie", "Admin123!", ApplicationRoles.Admin);
 
-        await CreateUserIfNotExistsAsync(
-            userManager,
-            email: "lecturer@vgc.ie",
-            password: "Lecturer123!",
-            role: ApplicationRoles.Lecturer);
+        var lecturer = await CreateUserIfNotExistsAsync(userManager, "lecturer@vgc.ie", "Lecturer123!", ApplicationRoles.Lecturer);
+        var student1 = await CreateUserIfNotExistsAsync(userManager, "student1@vgc.ie", "Student123!", ApplicationRoles.Student);
+        var student2 = await CreateUserIfNotExistsAsync(userManager, "student2@vgc.ie", "Student123!", ApplicationRoles.Student);
 
-        await CreateUserIfNotExistsAsync(
-            userManager,
-            email: "student1@vgc.ie",
-            password: "Student123!",
-            role: ApplicationRoles.Student);
+        if (student1 != null && !await context.StudentProfiles.AnyAsync(s => s.IdentityUserId == student1.Id))
+        {
+            await context.StudentProfiles.AddAsync(new StudentProfile
+            {
+                IdentityUserId = student1.Id,
+                FirstName = "Alice",
+                LastName = "Murphy",
+                Email = "student1@vgc.ie",
+                StudentNumber = "VGC001",
+                City = "Dublin"
+            });
+        }
 
-        await CreateUserIfNotExistsAsync(
-            userManager,
-            email: "student2@vgc.ie",
-            password: "Student123!",
-            role: ApplicationRoles.Student);
+        if (student2 != null && !await context.StudentProfiles.AnyAsync(s => s.IdentityUserId == student2.Id))
+        {
+            await context.StudentProfiles.AddAsync(new StudentProfile
+            {
+                IdentityUserId = student2.Id,
+                FirstName = "Brian",
+                LastName = "Kelly",
+                Email = "student2@vgc.ie",
+                StudentNumber = "VGC002",
+                City = "Cork"
+            });
+        }
+
+        await context.SaveChangesAsync();
     }
 
     /// <summary>
     /// Cria um role se ainda não existir no banco.
     /// </summary>
-    /// <param name="roleManager">Serviço do Identity para gestão de roles.</param>
-    /// <param name="roleName">Nome do role a criar.</param>
     private static async Task CreateRoleIfNotExistsAsync(
         RoleManager<IdentityRole> roleManager,
         string roleName)
@@ -69,12 +81,9 @@ public static class UsersAndRolesData
 
     /// <summary>
     /// Cria um utilizador com o role especificado se ainda não existir no banco.
+    /// Retorna o utilizador criado ou null se já existia.
     /// </summary>
-    /// <param name="userManager">Serviço do Identity para gestão de utilizadores.</param>
-    /// <param name="email">Email do utilizador, usado também como username.</param>
-    /// <param name="password">Password inicial do utilizador.</param>
-    /// <param name="role">Role a atribuir ao utilizador.</param>
-    private static async Task CreateUserIfNotExistsAsync(
+    private static async Task<ApplicationUser?> CreateUserIfNotExistsAsync(
         UserManager<ApplicationUser> userManager,
         string email,
         string password,
@@ -84,7 +93,7 @@ public static class UsersAndRolesData
 
         if (existingUser != null)
         {
-            return;
+            return null;
         }
 
         var user = new ApplicationUser
@@ -99,6 +108,9 @@ public static class UsersAndRolesData
         if (result.Succeeded)
         {
             await userManager.AddToRoleAsync(user, role);
+            return user;
         }
+
+        return null;
     }
 }
