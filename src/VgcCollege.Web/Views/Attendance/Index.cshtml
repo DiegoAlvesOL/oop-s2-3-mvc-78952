@@ -1,0 +1,41 @@
+@model IEnumerable<VgcCollege.Domain.Entities.AttendanceRecord>
+
+@{
+    ViewData["Title"] = "Attendance";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Attendance records</h2>
+    @if (User.IsInRole("Lecturer"))
+    {
+        <a asp-action="Create" asp-route-enrolmentId="@Context.Request.Query["enrolmentId"]"
+           class="btn btn-primary">Record attendance</a>
+    }
+</div>
+
+<table class="table table-bordered table-hover">
+    <thead class="table-light">
+    <tr>
+        <th>Session date</th>
+        <th>Present</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var record in Model)
+    {
+        <tr>
+            <td>@record.SessionDate.ToString("dd/MM/yyyy")</td>
+            <td>
+                @if (record.Present)
+                {
+                    <span class="badge bg-success">Present</span>
+                }
+                else
+                {
+                    <span class="badge bg-danger">Absent</span>
+                }
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

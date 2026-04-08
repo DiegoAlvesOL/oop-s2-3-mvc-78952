@@ -1,0 +1,39 @@
+@model VgcCollege.Web.Models.AttendanceViewModel
+
+@{
+    ViewData["Title"] = "Record attendance";
+}
+
+<h2 class="mb-1">Record attendance</h2>
+<p class="text-muted mb-4">
+    Student: <strong>@Model.StudentName</strong> —
+    Course: <strong>@Model.CourseName</strong>
+</p>
+
+<div class="col-md-4">
+    <form asp-action="Create" method="post">
+        <input type="hidden" asp-for="EnrolmentId" />
+        <input type="hidden" asp-for="StudentName" />
+        <input type="hidden" asp-for="CourseName" />
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <div class="mb-3">
+            <label asp-for="SessionDate" class="form-label"></label>
+            <input asp-for="SessionDate" class="form-control" type="date" />
+            <span asp-validation-for="SessionDate" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3 form-check">
+            <input asp-for="Present" class="form-check-input" />
+            <label asp-for="Present" class="form-check-label"></label>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a asp-action="Index" asp-route-enrolmentId="@Model.EnrolmentId"
+           class="btn btn-outline-secondary ms-2">Cancel</a>
+    </form>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}
