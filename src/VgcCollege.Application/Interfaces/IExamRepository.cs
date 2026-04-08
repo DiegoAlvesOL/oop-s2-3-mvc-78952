@@ -11,12 +11,13 @@ namespace VgcCollege.Application.Interfaces;
 /// </summary>
 public interface IExamRepository
 {
-    Task<IEnumerable<Exam>> GetByCourseIdAsync (int courseId);
-    
+    /// <summary>Retorna todos os exames de um curso específico.</summary>
+    /// <param name="courseId">Identificador do curso.</param>
+    Task<IEnumerable<Exam>> GetByCourseAsync(int courseId);
     Task<Exam?> GetByIdAsync(int id);
     Task AddAsync(Exam exam);
     Task UpdateAsync(Exam exam);
-    
+    Task<ExamResult?> GetResultByStudentAsync(int examId, int studentProfileId);
     Task<IEnumerable<ExamResult>> GetResultsByExamAsync(int examId);
     Task AddResultAsync(ExamResult result);
     Task UpdateResultAsync(ExamResult result);

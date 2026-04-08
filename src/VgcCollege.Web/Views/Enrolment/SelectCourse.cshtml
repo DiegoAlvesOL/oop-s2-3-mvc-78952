@@ -1,0 +1,18 @@
+@{
+    ViewData["Title"] = "Select course";
+}
+
+<h2 class="mb-4">Select a course to view enrolments</h2>
+
+<div class="col-md-4">
+    <ul class="list-group">
+        @foreach (var course in (IEnumerable<VgcCollege.Domain.Entities.Course>)ViewBag.Courses)
+        {
+            <li class="list-group-item">
+                <a asp-action="Index" asp-route-courseId="@course.Id">
+                    @course.CourseName — @course.Branch?.BranchName
+                </a>
+            </li>
+        }
+    </ul>
+</div>

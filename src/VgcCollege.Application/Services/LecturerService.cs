@@ -151,4 +151,14 @@ public class LecturerService
     {
         await _assignmentRepository.RemoveAsync(lecturerProfileId, courseId);
     }
+    
+    /// <summary>
+    /// Retorna o perfil de lecturer associado a um utilizador de Identity.
+    /// </summary>
+    /// <param name="identityUserId">Identificador do utilizador no ASP.NET Core Identity.</param>
+    public async Task<LecturerProfile?> GetByIdentityUserIdAsync(string identityUserId)
+    {
+        return await _lecturerRepository.GetByIdentityUserIdAsync(identityUserId);
+    }
+    
 }
