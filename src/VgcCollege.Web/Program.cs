@@ -71,6 +71,9 @@ try
     builder.Services.AddScoped<EnrolmentService>();
     builder.Services.AddScoped<IAttendanceRepository, AttendanceRepository>();
     builder.Services.AddScoped<AttendanceService>();
+    builder.Services.AddScoped<IAssignmentRepository, AssignmentRepository>();
+    builder.Services.AddScoped<AssignmentService>();
+    
     
     builder.Services.AddControllersWithViews();
 

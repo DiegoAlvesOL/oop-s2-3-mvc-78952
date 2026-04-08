@@ -1,0 +1,31 @@
+@model IEnumerable<VgcCollege.Domain.Entities.AssignmentResult>
+
+@{
+    ViewData["Title"] = "My results";
+}
+
+<h2 class="mb-4">My results</h2>
+
+<table class="table table-bordered table-hover">
+    <thead class="table-light">
+    <tr>
+        <th>Assignment</th>
+        <th>Score</th>
+        <th>Max score</th>
+        <th>Feedback</th>
+        <th>Due date</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var result in Model)
+    {
+        <tr>
+            <td>@result.Assignment?.Title</td>
+            <td>@result.Score</td>
+            <td>@result.Assignment?.MaxScore</td>
+            <td>@result.Feedback</td>
+            <td>@result.Assignment?.DueDate.ToString("dd/MM/yyyy")</td>
+        </tr>
+    }
+    </tbody>
+</table>

@@ -1,0 +1,42 @@
+@model VgcCollege.Web.Models.AssignmentResultViewModel
+
+@{
+    ViewData["Title"] = "Set result";
+}
+
+<h2 class="mb-1">Set result</h2>
+<p class="text-muted mb-4">
+    Assignment: <strong>@Model.AssignmentTitle</strong> —
+    Student: <strong>@Model.StudentName</strong> —
+    Max score: <strong>@Model.MaxScore</strong>
+</p>
+
+<div class="col-md-4">
+    <form asp-action="SetResult" method="post">
+        <input type="hidden" asp-for="AssignmentId" />
+        <input type="hidden" asp-for="StudentProfileId" />
+        <input type="hidden" asp-for="AssignmentTitle" />
+        <input type="hidden" asp-for="StudentName" />
+        <input type="hidden" asp-for="MaxScore" />
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <div class="mb-3">
+            <label asp-for="Score" class="form-label"></label>
+            <input asp-for="Score" class="form-control" type="number" min="0" max="@Model.MaxScore" />
+            <span asp-validation-for="Score" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Feedback" class="form-label"></label>
+            <textarea asp-for="Feedback" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="Feedback" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save result</button>
+        <a asp-action="Index" class="btn btn-outline-secondary ms-2">Cancel</a>
+    </form>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}
