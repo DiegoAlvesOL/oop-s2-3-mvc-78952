@@ -10,12 +10,12 @@ namespace VgcCollege.Application.Interfaces;
 /// </summary>
 public interface ILecturerRepository
 {
+    /// <summary>Retorna todos os perfis de lecturers do sistema.</summary>
     Task<IEnumerable<LecturerProfile>> GetAllAsync();
-    Task<LecturerProfile> GetByIdAsync(int id);
-    Task<LecturerProfile> GetByIdentityUserIdAsync (string identityUserId);
+    Task<LecturerProfile?> GetByIdAsync(int id);
+    Task<LecturerProfile?> GetByIdentityUserIdAsync(string identityUserId);
     Task<IEnumerable<LecturerCourseAssignment>> GetCourseAssignmentsAsync(int lecturerProfileId);
     Task AddAsync(LecturerProfile lecturer);
     Task UpdateAsync(LecturerProfile lecturer);
     Task DeleteAsync(int id);
-
 }

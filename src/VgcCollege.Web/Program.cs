@@ -64,6 +64,9 @@ try
     builder.Services.AddScoped<CourseService>();
     builder.Services.AddScoped<IStudentRepository, StudentRepository>();
     builder.Services.AddScoped<StudentService>();
+    builder.Services.AddScoped<ILecturerRepository, LecturerRepository>();
+    builder.Services.AddScoped<ILecturerCourseAssignmentRepository, LecturerCourseAssignmentRepository>();
+    builder.Services.AddScoped<LecturerService>();
     
     builder.Services.AddControllersWithViews();
 
