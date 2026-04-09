@@ -89,9 +89,11 @@ try
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
+        // Aplica as migrations automaticamente — necessário no Docker onde o banco está vazio.
+        await context.Database.MigrateAsync();
+
         await DatabaseInitialiser.SeedAsync(context, userManager, roleManager);
     }
-
 
     
     // FASE 2 Pipeline HTTP
