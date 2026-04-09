@@ -164,6 +164,15 @@ public class StudentController : Controller
 
         try
         {
+            // Obtém o IdentityUserId original do aluno para não o sobrescrever
+            // com o ID do utilizador autenticado (que pode ser o Admin).
+            var existing = await _studentService.GetByIdAsync(id, userId, isAdmin);
+
+            if (existing == null)
+            {
+                return NotFound();
+            }
+
             var student = new StudentProfile
             {
                 Id = id,
@@ -174,7 +183,7 @@ public class StudentController : Controller
                 StreetName = model.StreetName,
                 City = model.City,
                 StudentNumber = model.StudentNumber,
-                IdentityUserId = userId
+                IdentityUserId = existing.IdentityUserId
             };
 
             await _studentService.UpdateAsync(student, userId, isAdmin);

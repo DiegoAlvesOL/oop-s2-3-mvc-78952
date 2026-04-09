@@ -29,27 +29,28 @@ public class AssignmentService
         _lecturerAssignmentRepository = lecturerAssignmentRepository;
     }
 
-    /// <summary>
-    /// Retorna todos os assignments de um curso específico.
-    /// </summary>
+    /// <summary>Retorna todos os assignments de um curso específico.</summary>
     /// <param name="courseId">Identificador do curso.</param>
     public async Task<IEnumerable<Assignment>> GetByCourseAsync(int courseId)
     {
         return await _assignmentRepository.GetByCourseAsync(courseId);
     }
 
-    /// <summary>
-    /// Retorna todos os resultados de um aluno específico.
-    /// </summary>
+    /// <summary>Retorna um assignment pelo seu identificador único.</summary>
+    /// <param name="id">Identificador do assignment.</param>
+    public async Task<Assignment?> GetByIdAsync(int id)
+    {
+        return await _assignmentRepository.GetByIdAsync(id);
+    }
+
+    /// <summary>Retorna todos os resultados de um aluno específico.</summary>
     /// <param name="studentProfileId">Identificador do perfil do aluno.</param>
     public async Task<IEnumerable<AssignmentResult>> GetResultsByStudentAsync(int studentProfileId)
     {
         return await _assignmentRepository.GetResultsByStudentAsync(studentProfileId);
     }
 
-    /// <summary>
-    /// Retorna todos os resultados de um assignment específico.
-    /// </summary>
+    /// <summary>Retorna todos os resultados de um assignment específico.</summary>
     /// <param name="assignmentId">Identificador do assignment.</param>
     public async Task<IEnumerable<AssignmentResult>> GetResultsByAssignmentAsync(int assignmentId)
     {

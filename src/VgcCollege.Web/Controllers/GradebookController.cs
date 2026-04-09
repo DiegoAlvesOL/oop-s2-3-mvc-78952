@@ -1,3 +1,8 @@
+// Purpose   : Gere as acções do gradebook com controlo de acesso por role.
+//             Lecturer cria assignments e lança resultados. Student vê apenas os próprios.
+// Consumed by: Views/Gradebook/.
+// Layer     : Web — Controllers
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -18,6 +23,7 @@ public class GradebookController : Controller
     private readonly AssignmentService _assignmentService;
     private readonly LecturerService _lecturerService;
     private readonly StudentService _studentService;
+    private readonly EnrolmentService _enrolmentService;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly ILogger<GradebookController> _logger;
 
@@ -28,12 +34,14 @@ public class GradebookController : Controller
         AssignmentService assignmentService,
         LecturerService lecturerService,
         StudentService studentService,
+        EnrolmentService enrolmentService,
         UserManager<ApplicationUser> userManager,
         ILogger<GradebookController> logger)
     {
         _assignmentService = assignmentService;
         _lecturerService = lecturerService;
         _studentService = studentService;
+        _enrolmentService = enrolmentService;
         _userManager = userManager;
         _logger = logger;
     }
@@ -81,6 +89,38 @@ public class GradebookController : Controller
 
         var results = await _assignmentService.GetResultsByStudentAsync(studentProfile.Id);
         return View("StudentResults", results);
+    }
+
+    /// <summary>
+    /// Lista todos os alunos matriculados no curso do assignment e os seus resultados.
+    /// Acesso exclusivo ao Lecturer.
+    /// </summary>
+    /// <param name="assignmentId">Identificador do assignment.</param>
+    [Authorize(Roles = ApplicationRoles.Lecturer)]
+    public async Task<IActionResult> Results(int assignmentId)
+    {
+        var userId = _userManager.GetUserId(User)!;
+        var lecturerProfile = await _lecturerService.GetByIdentityUserIdAsync(userId);
+
+        if (lecturerProfile == null)
+        {
+            return Forbid();
+        }
+
+        var assignment = await _assignmentService.GetByIdAsync(assignmentId);
+
+        if (assignment == null)
+        {
+            return NotFound();
+        }
+
+        var existingResults = await _assignmentService.GetResultsByAssignmentAsync(assignmentId);
+        var enrolments = await _enrolmentService.GetByCourseAsync(assignment.CourseId);
+
+        ViewBag.Assignment = assignment;
+        ViewBag.ExistingResults = existingResults.ToDictionary(r => r.StudentProfileId, r => r);
+
+        return View(enrolments);
     }
 
     /// <summary>
@@ -147,9 +187,7 @@ public class GradebookController : Controller
     [Authorize(Roles = ApplicationRoles.Lecturer)]
     public async Task<IActionResult> SetResult(int assignmentId, int studentProfileId)
     {
-        var results = await _assignmentService.GetResultsByAssignmentAsync(assignmentId);
-        var assignment = results.FirstOrDefault()?.Assignment
-            ?? await GetAssignmentForFormAsync(assignmentId);
+        var assignment = await _assignmentService.GetByIdAsync(assignmentId);
 
         var student = await _studentService.GetByIdAsync(studentProfileId, _userManager.GetUserId(User)!, isAdmin: true);
 
@@ -207,21 +245,12 @@ public class GradebookController : Controller
                 "Result set for student {StudentId} on assignment {AssignmentId} by lecturer {LecturerId}.",
                 model.StudentProfileId, model.AssignmentId, lecturerProfile.Id);
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Results), new { assignmentId = model.AssignmentId });
         }
         catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
         {
             ModelState.AddModelError(string.Empty, exception.Message);
             return View(model);
         }
-    }
-
-    /// <summary>
-    /// Método auxiliar para obter os dados de um assignment para o formulário.
-    /// </summary>
-    private async Task<Assignment?> GetAssignmentForFormAsync(int assignmentId)
-    {
-        var results = await _assignmentService.GetResultsByAssignmentAsync(assignmentId);
-        return results.FirstOrDefault()?.Assignment;
     }
 }

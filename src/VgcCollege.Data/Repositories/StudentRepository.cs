@@ -62,8 +62,13 @@ public class StudentRepository : IStudentRepository
     /// <param name="student">Entidade StudentProfile com os dados actualizados.</param>
     public async Task UpdateAsync(StudentProfile student)
     {
-        _context.StudentProfiles.Update(student);
-        await _context.SaveChangesAsync();
+        var tracked = await _context.StudentProfiles.FindAsync(student.Id);
+
+        if (tracked != null)
+        {
+            _context.Entry(tracked).CurrentValues.SetValues(student);
+            await _context.SaveChangesAsync();
+        }
     }
 
     /// <summary>Remove um perfil de aluno pelo seu identificador único.</summary>

@@ -28,12 +28,12 @@ public class CourseViewModel
     /// <summary>Data de início do curso.</summary>
     [Required(ErrorMessage = "Start date is required.")]
     [Display(Name = "Start date")]
-    public DateOnly StartDate { get; set; }
+    public DateOnly StartDate { get; set; } = DateOnly.FromDateTime(DateTime.Today);
 
     /// <summary>Data de fim do curso.</summary>
     [Required(ErrorMessage = "End date is required.")]
     [Display(Name = "End date")]
-    public DateOnly EndDate { get; set; }
+    public DateOnly EndDate { get; set; } = DateOnly.FromDateTime(DateTime.Today.AddYears(1));
 
     /// <summary>
     /// Lista de branches disponíveis para o dropdown de selecção.
