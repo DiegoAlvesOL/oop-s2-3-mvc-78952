@@ -116,6 +116,7 @@ public class ExamController : Controller
     /// Muda ResultsReleased de false para true.
     /// </summary>
     /// <param name="examId">Identificador do exame a libertar.</param>
+    /// <param name="courseId">Identificador do curso para redireccionamento.</param>
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = ApplicationRoles.Admin)]
@@ -130,14 +131,13 @@ public class ExamController : Controller
     /// <summary>
     /// Apresenta o formulário de lançamento de resultado. Acesso exclusivo ao Lecturer.
     /// </summary>
+    /// <param name="examId">Identificador do exame.</param>
+    /// <param name="studentProfileId">Identificador do perfil do aluno.</param>
     [Authorize(Roles = ApplicationRoles.Lecturer)]
     public async Task<IActionResult> SetResult(int examId, int studentProfileId)
     {
-        var exam = await _examService.GetByCourseAsync(0);
-        var examEntity = (await _examService.GetByCourseAsync(
-            (await _examService.GetResultsByExamAsync(examId))
-            .FirstOrDefault()?.Exam?.CourseId ?? 0))
-            .FirstOrDefault(e => e.Id == examId);
+        var results = await _examService.GetResultsByExamAsync(examId);
+        var examEntity = results.FirstOrDefault()?.Exam;
 
         var userId = _userManager.GetUserId(User)!;
         var student = await _studentService.GetByIdAsync(studentProfileId, userId, isAdmin: true);
@@ -216,7 +216,7 @@ public class ExamController : Controller
 
         if (studentProfile == null)
         {
-            return View(Enumerable.Empty<ExamResult>());
+            return View();
         }
 
         return View(studentProfile);

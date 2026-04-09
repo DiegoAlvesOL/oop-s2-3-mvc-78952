@@ -1,3 +1,8 @@
+// Purpose   : Gere as acções de CRUD para StudentProfile com controlo de acesso por role.
+//             Admin acede a todos os perfis. Student acede apenas ao próprio.
+// Consumed by: Views/Student/.
+// Layer     : Web — Controllers
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -10,15 +15,14 @@ using VgcCollege.Web.Models;
 namespace VgcCollege.Web.Controllers;
 
 /// <summary>
-///: Gere as acções de CRUD para StudentProfile com controlo de acesso por role.
+/// Controller de StudentProfile com controlo de acesso por role.
 /// Admin acede a todos os perfis. Student acede apenas ao próprio.
-/// Consumed by: Views/Student/.
-/// Layer: Web Controllers
 /// </summary>
 [Authorize]
 public class StudentController : Controller
 {
     private readonly StudentService _studentService;
+    private readonly EnrolmentService _enrolmentService;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly ILogger<StudentController> _logger;
 
@@ -26,14 +30,17 @@ public class StudentController : Controller
     /// Inicializa o controller com os serviços necessários.
     /// </summary>
     /// <param name="studentService">Service de perfis de alunos.</param>
+    /// <param name="enrolmentService">Service de matrículas.</param>
     /// <param name="userManager">Serviço do Identity para obter o utilizador autenticado.</param>
     /// <param name="logger">Serviço de logging.</param>
     public StudentController(
         StudentService studentService,
+        EnrolmentService enrolmentService,
         UserManager<ApplicationUser> userManager,
         ILogger<StudentController> logger)
     {
         _studentService = studentService;
+        _enrolmentService = enrolmentService;
         _userManager = userManager;
         _logger = logger;
     }
@@ -180,6 +187,27 @@ public class StudentController : Controller
             _logger.LogWarning("Unauthorized update attempt on student profile {ProfileId} by user {UserId}.", id, userId);
             return Forbid();
         }
+    }
+
+    /// <summary>
+    /// Lista todos os cursos em que um aluno está matriculado.
+    /// Acesso exclusivo ao Admin.
+    /// </summary>
+    /// <param name="id">Identificador do perfil do aluno.</param>
+    [Authorize(Roles = ApplicationRoles.Admin)]
+    public async Task<IActionResult> Enrolments(int id)
+    {
+        var student = await _studentService.GetByIdAsync(id, _userManager.GetUserId(User)!, isAdmin: true);
+
+        if (student == null)
+        {
+            return NotFound();
+        }
+
+        var enrolments = await _enrolmentService.GetByStudentAsync(id);
+        ViewBag.StudentName = $"{student.FirstName} {student.LastName}";
+
+        return View(enrolments);
     }
 
     /// <summary>Remove um perfil de aluno. Acesso exclusivo ao Admin.</summary>

@@ -1,0 +1,42 @@
+@model IEnumerable<VgcCollege.Domain.Entities.CourseEnrolment>
+
+@{
+    ViewData["Title"] = "Student enrolments";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h2 class="mb-0">Enrolments</h2>
+        <p class="text-muted mb-0">@ViewBag.StudentName</p>
+    </div>
+    <a asp-action="Index" class="btn btn-outline-secondary">Back to students</a>
+</div>
+
+@if (!Model.Any())
+{
+    <p class="text-muted mt-3">This student is not enrolled in any courses yet.</p>
+}
+else
+{
+    <table class="table table-bordered table-hover">
+        <thead class="table-light">
+        <tr>
+            <th>Course</th>
+            <th>Branch</th>
+            <th>Enrol date</th>
+            <th>Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var enrolment in Model)
+        {
+            <tr>
+                <td>@enrolment.Course?.CourseName</td>
+                <td>@enrolment.Course?.Branch?.BranchName</td>
+                <td>@enrolment.EnrolDate.ToString("dd/MM/yyyy")</td>
+                <td>@enrolment.Status</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
