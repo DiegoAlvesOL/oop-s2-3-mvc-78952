@@ -36,6 +36,19 @@ public class LecturerCourseAssignmentRepository : ILecturerCourseAssignmentRepos
     }
 
     /// <summary>
+    /// Retorna todos os lecturers atribuídos a um curso específico,
+    /// incluindo os dados do perfil do lecturer.
+    /// </summary>
+    /// <param name="courseId">Identificador do curso.</param>
+    public async Task<IEnumerable<LecturerCourseAssignment>> GetByCourseAsync(int courseId)
+    {
+        return await _context.LecturerCourseAssignments
+            .Include(assignment => assignment.Lecturer)
+            .Where(assignment => assignment.CourseId == courseId)
+            .ToListAsync();
+    }
+
+    /// <summary>
     /// Verifica se um lecturer já está atribuído a um curso específico.
     /// </summary>
     /// <param name="lecturerProfileId">Identificador do perfil do lecturer.</param>

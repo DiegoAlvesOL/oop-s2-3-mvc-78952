@@ -8,9 +8,8 @@ namespace VgcCollege.Application.Interfaces;
 /// </summary>
 public interface ILecturerCourseAssignmentRepository
 {
-    /// <summary>Retorna todos os cursos atribuídos a um lecturer específico.</summary>
-    /// <param name="lecturerProfileId">Identificador do perfil do lecturer.</param>
     Task<IEnumerable<LecturerCourseAssignment>> GetByLecturerAsync(int lecturerProfileId);
+    Task<IEnumerable<LecturerCourseAssignment>> GetByCourseAsync(int courseId);
     Task<bool> ExistsAsync(int lecturerProfileId, int courseId);
     Task AddAsync(LecturerCourseAssignment assignment);
     Task RemoveAsync(int lecturerProfileId, int courseId);

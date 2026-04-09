@@ -18,16 +18,30 @@ namespace VgcCollege.Web.Controllers;
 public class BranchController : Controller
 {
     private readonly BranchService _branchService;
+    private readonly CourseService _courseService;
+    private readonly EnrolmentService _enrolmentService;
+    private readonly LecturerService _lecturerService;
     private readonly ILogger<BranchController> _logger;
 
     /// <summary>
-    /// Inicializa o controller com o service de branches e o logger.
+    /// Inicializa o controller com os services necessários e o logger.
     /// </summary>
     /// <param name="branchService">Service de branches injectado via DI.</param>
+    /// <param name="courseService">Service de cursos injectado via DI.</param>
+    /// <param name="enrolmentService">Service de matrículas injectado via DI.</param>
+    /// <param name="lecturerService">Service de lecturers injectado via DI.</param>
     /// <param name="logger">Serviço de logging.</param>
-    public BranchController(BranchService branchService, ILogger<BranchController> logger)
+    public BranchController(
+        BranchService branchService,
+        CourseService courseService,
+        EnrolmentService enrolmentService,
+        LecturerService lecturerService,
+        ILogger<BranchController> logger)
     {
         _branchService = branchService;
+        _courseService = courseService;
+        _enrolmentService = enrolmentService;
+        _lecturerService = lecturerService;
         _logger = logger;
     }
 
@@ -36,6 +50,39 @@ public class BranchController : Controller
     {
         var branches = await _branchService.GetAllAsync();
         return View(branches);
+    }
+
+    /// <summary>
+    /// Apresenta os detalhes de uma branch — cursos, lecturers e alunos matriculados.
+    /// </summary>
+    /// <param name="id">Identificador da branch.</param>
+    public async Task<IActionResult> Details(int id)
+    {
+        var branch = await _branchService.GetByIdAsync(id);
+
+        if (branch == null)
+        {
+            return NotFound();
+        }
+
+        var courses = await _courseService.GetByBranchAsync(id);
+        var courseDetails = new List<BranchCourseDetailViewModel>();
+
+        foreach (var course in courses)
+        {
+            var enrolments = await _enrolmentService.GetByCourseAsync(course.Id);
+            var lecturerAssignments = await _lecturerService.GetAssignmentsByCourseAsync(course.Id);
+
+            courseDetails.Add(new BranchCourseDetailViewModel
+            {
+                Course = course,
+                Enrolments = enrolments.ToList(),
+                LecturerAssignments = lecturerAssignments.ToList()
+            });
+        }
+
+        ViewBag.Branch = branch;
+        return View(courseDetails);
     }
 
     /// <summary>Apresenta o formulário de criação de uma nova branch.</summary>

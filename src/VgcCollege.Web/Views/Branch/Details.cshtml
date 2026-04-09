@@ -1,0 +1,102 @@
+@model IEnumerable<VgcCollege.Web.Models.BranchCourseDetailViewModel>
+
+@{
+    ViewData["Title"] = "Branch details";
+    var branch = ViewBag.Branch as VgcCollege.Domain.Entities.Branch;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-1">
+    <h2 class="mb-0">@branch?.BranchName</h2>
+    <a asp-action="Index" class="btn btn-outline-secondary">Back to branches</a>
+</div>
+<p class="text-muted mb-4">@branch?.StreetName, @branch?.City</p>
+
+@if (!Model.Any())
+{
+    <p class="text-muted">No courses found for this branch.</p>
+}
+else
+{
+    @foreach (var detail in Model)
+    {
+        <div class="card mb-4 border-0 shadow-sm">
+            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">@detail.Course.CourseName</h5>
+                <small class="text-muted">
+                    @detail.Course.StartDate.ToString("dd/MM/yyyy") —
+                    @detail.Course.EndDate.ToString("dd/MM/yyyy")
+                </small>
+            </div>
+            <div class="card-body">
+
+                <h6 class="text-muted mb-2">Lecturers</h6>
+                @if (!detail.LecturerAssignments.Any())
+                {
+                    <p class="text-muted small">No lecturers assigned.</p>
+                }
+                else
+                {
+                    <table class="table table-sm table-bordered mb-3">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Tutor</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var assignment in detail.LecturerAssignments)
+                            {
+                                <tr>
+                                    <td>@assignment.Lecturer?.FirstName @assignment.Lecturer?.LastName</td>
+                                    <td>@assignment.Lecturer?.Email</td>
+                                    <td>
+                                        @if (assignment.IsTutor)
+                                        {
+                                            <span class="badge bg-success">Tutor</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">Lecturer</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+
+                <h6 class="text-muted mb-2">Enrolled students</h6>
+                @if (!detail.Enrolments.Any())
+                {
+                    <p class="text-muted small">No students enrolled.</p>
+                }
+                else
+                {
+                    <table class="table table-sm table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Student number</th>
+                                <th>Name</th>
+                                <th>Enrol date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var enrolment in detail.Enrolments)
+                            {
+                                <tr>
+                                    <td>@enrolment.Student?.StudentNumber</td>
+                                    <td>@enrolment.Student?.FirstName @enrolment.Student?.LastName</td>
+                                    <td>@enrolment.EnrolDate.ToString("dd/MM/yyyy")</td>
+                                    <td>@enrolment.Status</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+
+            </div>
+        </div>
+    }
+}

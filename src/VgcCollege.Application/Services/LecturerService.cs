@@ -161,4 +161,13 @@ public class LecturerService
         return await _lecturerRepository.GetByIdentityUserIdAsync(identityUserId);
     }
     
+    /// <summary>
+    /// Retorna todos os lecturers atribuídos a um curso específico.
+    /// </summary>
+    /// <param name="courseId">Identificador do curso.</param>
+    public async Task<IEnumerable<LecturerCourseAssignment>> GetAssignmentsByCourseAsync(int courseId)
+    {
+        return await _assignmentRepository.GetByCourseAsync(courseId);
+    }
+    
 }
