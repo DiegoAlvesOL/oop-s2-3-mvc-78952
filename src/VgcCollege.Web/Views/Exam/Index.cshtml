@@ -1,0 +1,60 @@
+@model IEnumerable<VgcCollege.Domain.Entities.Exam>
+
+@{
+    ViewData["Title"] = "Exams";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Exams</h2>
+    @if (User.IsInRole("Lecturer"))
+    {
+        <a asp-action="Create" asp-route-courseId="@ViewBag.CourseId" class="btn btn-primary">
+            Add exam
+        </a>
+    }
+</div>
+
+<table class="table table-bordered table-hover">
+    <thead class="table-light">
+    <tr>
+        <th>Title</th>
+        <th>Date</th>
+        <th>Max score</th>
+        <th>Results released</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var exam in Model)
+    {
+        <tr>
+            <td>@exam.Title</td>
+            <td>@exam.ExamDate.ToString("dd/MM/yyyy")</td>
+            <td>@exam.MaxScore</td>
+            <td>
+                @if (exam.ResultsReleased)
+                {
+                    <span class="badge bg-success">Released</span>
+                }
+                else
+                {
+                    <span class="badge bg-warning text-dark">Provisional</span>
+                }
+            </td>
+            <td>
+                @if (User.IsInRole("Admin") && !exam.ResultsReleased)
+                {
+                    <form asp-action="ReleaseResults" method="post" class="d-inline">
+                        <input type="hidden" name="examId" value="@exam.Id" />
+                        <input type="hidden" name="courseId" value="@ViewBag.CourseId" />
+                        <button type="submit" class="btn btn-sm btn-outline-success"
+                                onclick="return confirm('Release results for this exam?')">
+                            Release results
+                        </button>
+                    </form>
+                }
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

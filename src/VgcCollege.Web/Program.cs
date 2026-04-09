@@ -73,7 +73,8 @@ try
     builder.Services.AddScoped<AttendanceService>();
     builder.Services.AddScoped<IAssignmentRepository, AssignmentRepository>();
     builder.Services.AddScoped<AssignmentService>();
-    
+    builder.Services.AddScoped<IExamRepository, ExamRepository>();
+    builder.Services.AddScoped<ExamService>();
     
     builder.Services.AddControllersWithViews();
 
