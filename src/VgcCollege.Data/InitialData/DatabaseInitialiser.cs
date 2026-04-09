@@ -27,5 +27,6 @@ public static class DatabaseInitialiser
         await UsersAndRolesData.SeedAsync(context, userManager, roleManager);
         await BranchesAndCoursesData.SeedAsync(context);
         await EnrolmentsAndAttendanceData.SeedAsync(context);
+        await GradebookAndExamsData.SeedAsync(context);
     }
 }
